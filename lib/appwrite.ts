@@ -1,4 +1,4 @@
-import { Account, Avatars, Client, ID } from "react-native-appwrite";
+import { Account, Avatars, Client, Databases, ID } from "react-native-appwrite";
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
   platform: "com.tinysoda.aora",
@@ -19,6 +19,7 @@ client
 
 const account = new Account(client);
 const avatars = new Avatars(client);
+const databases = new Databases(client);
 
 export const createUser = async (
   email: string,
@@ -38,6 +39,7 @@ export const createUser = async (
     const avatarUrl = avatars.getInitials(username);
 
     await SignIn(email, password);
+    const newUser = await databases.createDocument();
   } catch (error) {
     console.log(error);
     throw new Error("error");
@@ -46,6 +48,8 @@ export const createUser = async (
 
 export async function SignIn(email: string, password: string) {
   try {
+    const session = await account.createEmailPasswordSession(email, password);
+    return session;
   } catch (error) {
     console.log(error);
     throw new Error();
