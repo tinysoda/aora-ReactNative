@@ -38,20 +38,25 @@ export const createUser = async (
 
     const avatarUrl = avatars.getInitials(username);
 
-    await SignIn(email, password);
-    const newUser = await databases.createDocument();
-  } catch (error) {
+    await signIn(email, password);
+    const newUser = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      ID.unique(),
+      { accountId: newAccount.$id, email, username, avatar: avatarUrl }
+    );
+  } catch (error: any) {
     console.log(error);
-    throw new Error("error");
+    throw new Error("error", error);
   }
 };
 
-export async function SignIn(email: string, password: string) {
+export async function signIn(email: string, password: string) {
   try {
     const session = await account.createEmailPasswordSession(email, password);
     return session;
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    throw new Error();
+    throw new Error("Error", error);
   }
 }

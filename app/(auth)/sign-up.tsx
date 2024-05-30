@@ -1,10 +1,19 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { createUser } from "@/lib/appwrite";
 
 const SignUp = () => {
@@ -15,13 +24,29 @@ const SignUp = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const submit = () => {
-    // createUser();
-    setIsSubmitting(true);
+  const submit = async () => {
+    if (!form.email || !form.password || !form.username) {
+      Alert.alert("Error", "Fill in all the field");
+    } else {
+      setIsSubmitting(true);
+      try {
+        const result = createUser(form.email, form.password, form.username);
+        // Set it to global state
+        router.replace("/home");
+      } catch (error: any) {
+        Alert.alert("Error", error.message);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
   };
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
+        {/* <KeyboardAvoidingView
+          behavior="padding"
+          keyboardVerticalOffset={Platform.OS === "ios" ? 70 : 0}
+        > */}
         <View className="w-full justify-center min-h-[85vh] px-4 my-6">
           <Image
             source={images.logo}
@@ -73,6 +98,7 @@ const SignUp = () => {
             </Link>
           </View>
         </View>
+        {/* </KeyboardAvoidingView> */}
       </ScrollView>
     </SafeAreaView>
   );
