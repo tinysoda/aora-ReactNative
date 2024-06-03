@@ -3,7 +3,7 @@ import {
   Text,
   ScrollView,
   Image,
-  TouchableOpacity,
+  Pressable,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -14,7 +14,7 @@ import { images } from "../../constants";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
-import { signIn } from "@/lib/appwrite";
+import { getCurrentUser, signIn } from "@/lib/appwrite";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -30,6 +30,7 @@ const SignIn = () => {
       setIsSubmitting(true);
       try {
         await signIn(form.email, form.password);
+        const result = await getCurrentUser();
         // Set it to global state
         router.replace("/home");
       } catch (error: any) {

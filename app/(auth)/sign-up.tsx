@@ -3,7 +3,7 @@ import {
   Text,
   ScrollView,
   Image,
-  TouchableOpacity,
+  Pressable,
   KeyboardAvoidingView,
   Platform,
   Alert,
